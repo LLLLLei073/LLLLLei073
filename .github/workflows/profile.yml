@@ -45,11 +45,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets profile stats.json weather.json
+          git add -A
           if git diff --cached --quiet; then
             echo "Nothing changed."
             exit 0
           fi
           git commit -m "Update profile pictures"
-          git pull --rebase origin main
+          echo "--- worktree ---"
+          git status --short
+          git pull --rebase --autostash origin main
           git push origin HEAD:main
