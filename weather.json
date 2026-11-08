@@ -1,0 +1,17 @@
+{
+ "city": "杭州",
+ "code": 51,
+ "state": "rain",
+ "label": "毛毛雨",
+ "severity": 0,
+ "alert": "",
+ "temp": 15.7,
+ "feels": 16.5,
+ "humidity": 96,
+ "wind": 6.3,
+ "gust": 16.2,
+ "precip": 0.1,
+ "is_day": true,
+ "updated": "2026-11-08T09:15",
+ "forced": false
+}

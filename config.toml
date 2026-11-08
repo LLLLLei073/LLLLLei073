@@ -1,0 +1,73 @@
+# ─────────────────────────────────────────────────────────────────────
+#  主页的全部文字都在这个文件里。
+#  改完提交，GitHub Actions 会用 scripts/gen.py 重新画一遍 assets/ 和
+#  profile/ 里的 SVG（大约 1 分钟），数据卡片每天自动更新。
+#
+#  上色写法：[pink]粉色[/]  [pink b]粉色粗体[/]  要显示 [ 本身写 [[
+#  可用颜色（Catppuccin）：rosewater flamingo pink mauve red maroon
+#   peach yellow green teal sky sapphire blue lavender text subtext0
+#   subtext1 overlay0 overlay1 overlay2
+# ─────────────────────────────────────────────────────────────────────
+
+[profile]
+login = "LLLLLei073"          # GitHub 用户名
+name = "favorys"              # 终端提示符里显示的名字
+banner = "FAVORYS"            # 顶部大字（只能英文/数字）
+
+[header]
+title = "favorys@github: ~ — zsh"
+last_login = "Last login: {date} on ttys000"
+subtitle = "[subtext0]favorys[/] [overlay1](LLLLLei073)[/] [overlay1]·[/] [teal]ZUST[/] [overlay1]·[/] [pink b]miaow~[/]  [overlay1]ฅ(^･ω･^ฅ)[/]"
+
+# 这些命令会一条条「打」出来，output 是打印结果（可以多行）
+[[header.commands]]
+cmd = 'echo "欢迎来到我的 GitHub ♡"'
+output = ["欢迎来到我的 GitHub ♡"]
+
+[[header.commands]]
+cmd = "python3 -c \"print('AC' * 4)\""
+output = ["ACACACAC"]
+
+[[header.commands]]
+cmd = "sudo apt install algorithm-skills"
+output = ["[green]✓[/] algorithm-skills is already the newest version [overlay1](=^･ω･^=)[/]"]
+
+[[header.commands]]
+cmd = 'git commit -m "今天也写题了"'
+output = ["[[main [yellow]f4v0rys[/]] 今天也写题了", " 1 file changed, 2 insertions(+)"]
+
+# ── neofetch 卡片：左边固定介绍，右边 GitHub 数据是自动的 ──────────────
+[neofetch]
+about = [
+  ["name",  "Favorys [overlay1]·[/] LLLLLei073"],
+  ["campus", "ZUST [overlay1]·[/] Hangzhou"],
+  ["stack",  "C++ [overlay1]·[/] TypeScript [overlay1]·[/] Astro"],
+  ["focus",  "ACM [overlay1]/[/] 算法竞赛 [overlay1]·[/] Codeforces"],
+]
+exclude_repos = ["LLLLLei073"]   # 统计语言时跳过的仓库
+
+# ── 贡献热力图 ─────────────────────────────────────────────────────────
+[activity]
+title = "contributions"
+cmd = "contributions --year"
+
+# ── 天气（主页会跟着当天真实天气变）──────────────────────────────────
+[weather]
+city = "杭州"
+latitude = "30.26"
+longitude = "120.14"
+timezone = "Asia/Shanghai"
+# 平时留空 = 自动抓当天天气。想预览某个形态就填：
+# clear / cloudy / rain / snow / fog / thunder / typhoon
+force = ""
+
+# ── 结尾 ───────────────────────────────────────────────────────────────
+[footer]
+title = "logout"
+lines = [
+  "[pink b]またね～[/]  See you next time!",
+  "Thanks for stopping by [overlay1]ฅ(^･ω･^ฅ)[/]",
+  "[overlay0]# updated {date} · drawn by python3[/]",
+]
+
+

@@ -1,0 +1,8 @@
+# 统一用 LF：Actions 跑在 Linux 上，避免每次生成都产生「只有换行符不同」的 diff
+* text=auto eol=lf
+*.svg text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
