@@ -1,7 +1,7 @@
 """主页上的每一张图。每个函数返回一段 SVG。"""
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime, timedelta
 
 import ascii_art as art
 import weatherfx
@@ -22,6 +22,23 @@ CF_COLORS = {
     "candidate master": "mauve", "master": "peach", "international master": "peach",
     "grandmaster": "red", "international grandmaster": "red", "legendary grandmaster": "red",
 }
+
+
+def cf_color(rating: int) -> str:
+    """按 CF 官方段位阈值给颜色。"""
+    if rating < 1200:
+        return "overlay1"
+    if rating < 1400:
+        return "green"
+    if rating < 1600:
+        return "teal"
+    if rating < 1900:
+        return "blue"
+    if rating < 2100:
+        return "mauve"
+    if rating < 2400:
+        return "peach"
+    return "red"
 
 
 # ----------------------------------------------------------------- 小工具
@@ -489,3 +506,167 @@ def footer(cfg: dict, P: dict, weather: dict | None = None) -> str:
         c.add(t.markup(tx, cy - 1 + r * 1.2, m.format(date=date.today().isoformat()))[0])
     c.add(t.markup(0, 9, "[overlay1][[Process completed][/]")[0])
     return c.svg("see you next time")
+
+
+# ----------------------------------------------------------------- Codeforces：rating 趋势
+
+def cf_rating(cfg: dict, P: dict, cf: dict) -> str:
+    hist = [p for p in cf.get("contests", []) if isinstance(p.get("rating"), int)]
+    handle = cf.get("handle", "")
+
+    size, lh = 14, 1.5
+    plot_h = 168
+    H = MARGIN * 2 + TITLE_H + 16 + 2 * size * lh + 30 + plot_h + 26
+    c = Canvas(W, H)
+    ox, oy = window(c, P, H, "codeforces — rating")
+
+    t = Term(c, P, ox, oy, size=size, lh=lh)
+    c.add(t.markup(0, 0, prompt(cfg) + f"cf rating {handle}")[0])
+
+    if len(hist) < 2:
+        c.add(t.markup(0, 1, "[overlay1]还没打过比赛，等第一场[/]")[0])
+        return c.svg("codeforces rating")
+
+    cur = cf.get("rating") or hist[-1]["rating"]
+    mx = cf.get("max_rating") or max(p["rating"] for p in hist)
+    summary = (f"[{cf_color(cur)} b]{cur}[/] [overlay1](max {mx})[/] "
+               f"[overlay1]·[/] [{cf_color(cur)}]{cf.get('rank', '')}[/] "
+               f"[overlay1]·[/] {len(hist)} 场")
+    c.add(t.markup(0, 1, summary)[0])
+
+    # 画布：左边留给刻度
+    x0, x1 = ox + 92, W - MARGIN - PAD
+    y0 = oy + 2 * size * lh + 26
+    y1 = y0 + plot_h
+
+    ratings = [p["rating"] for p in hist]
+    lo = int(min(ratings) // 200 * 200)
+    hi = int(-(-max(ratings) // 200) * 200)
+    if hi - lo < 400:
+        hi = lo + 400
+
+    def yy(r: float) -> float:
+        return y1 - (r - lo) / (hi - lo) * (y1 - y0)
+
+    times = [p["t"] for p in hist]
+    t0, t1 = times[0], times[-1] or times[0] + 1
+
+    def xx(ts: float) -> float:
+        return x0 + (ts - t0) / max(1, t1 - t0) * (x1 - x0)
+
+    # 横向网格 + 刻度
+    step = 200 if hi - lo <= 1600 else 400
+    r = lo
+    while r <= hi:
+        y = yy(r)
+        c.add(f'<line x1="{x0}" y1="{y:.1f}" x2="{x1}" y2="{y:.1f}" stroke="{P["overlay0"]}" '
+              f'stroke-width="1" opacity="0.28"/>')
+        label = str(r)
+        lt = Term(c, P, 0, y + 4, size=11.5)
+        lt.x = x0 - 10 - cells(label) * lt.cw
+        c.add(lt.text(0, 0, label, "overlay1"))
+        r += step
+
+    # 面积（线下方）+ 折线（按段位分段上色）
+    pts = [(xx(p["t"]), yy(p["rating"])) for p in hist]
+    area = (f"M{pts[0][0]:.1f},{y1:.1f} " + " ".join(f"L{x:.1f},{y:.1f}" for x, y in pts)
+            + f" L{pts[-1][0]:.1f},{y1:.1f} Z")
+    gid = c.uid("cfa")
+    c.define(gid, f'<linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1">'
+                  f'<stop offset="0" stop-color="{P["blue"]}" stop-opacity=".22"/>'
+                  f'<stop offset="1" stop-color="{P["blue"]}" stop-opacity="0"/></linearGradient>')
+    c.add(f'<path d="{area}" fill="url(#{gid})"/>')
+
+    for i in range(1, len(pts)):
+        color = cf_color(hist[i]["rating"])
+        c.add(f'<line x1="{pts[i - 1][0]:.1f}" y1="{pts[i - 1][1]:.1f}" x2="{pts[i][0]:.1f}" '
+              f'y2="{pts[i][1]:.1f}" stroke="{P[color]}" stroke-width="2" stroke-linecap="round"/>')
+
+    for i, (x, y) in enumerate(pts):
+        color = cf_color(hist[i]["rating"])
+        rr = 4.2 if i == len(pts) - 1 else 2.4
+        c.add(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{rr}" fill="{P[color]}" '
+              f'stroke="{P["base"]}" stroke-width="{1.2 if i == len(pts) - 1 else 0}"/>')
+
+    # 最高 rating 的虚线
+    if mx > lo:
+        ym = yy(mx)
+        c.add(f'<line x1="{x0}" y1="{ym:.1f}" x2="{x1}" y2="{ym:.1f}" stroke="{P["peach"]}" '
+              f'stroke-width="1" stroke-dasharray="4 4" opacity=".55"/>')
+        label = f"max {mx}"
+        mt = Term(c, P, 0, ym - 6, size=11)
+        mt.x = x1 - cells(label) * mt.cw
+        c.add(mt.text(0, 0, label, "peach"))
+
+    # 首尾日期
+    first_label = datetime.fromtimestamp(t0).strftime("%y.%m")
+    left = Term(c, P, x0, y1 + 18, size=11.5)
+    c.add(left.text(0, 0, first_label, "overlay1"))
+    last_label = datetime.fromtimestamp(t1).strftime("%y.%m")
+    right = Term(c, P, 0, y1 + 18, size=11.5)
+    right.x = x1 - cells(last_label) * right.cw
+    c.add(right.text(0, 0, last_label, "overlay1"))
+
+    return c.svg("codeforces rating")
+
+
+# ----------------------------------------------------------------- Codeforces：做题热力图
+
+def cf_heat(cfg: dict, P: dict, cf: dict) -> str:
+    daily: dict = cf.get("daily", {})
+    today = date.today()
+    last_sun = today - timedelta(days=(today.weekday() + 1) % 7)
+    first = last_sun - timedelta(weeks=52)
+
+    pitch, cell, label_w = 14, 12, 28
+    y_grid = MARGIN + TITLE_H + 16 + 14 * 1.5
+    y_cells = y_grid + 22
+    y_sum = y_cells + 7 * pitch + 14
+    H = y_sum + 14 * 1.5 + 18 + MARGIN
+    c = Canvas(W, H)
+    ox, oy = window(c, P, H, "codeforces — solved")
+
+    t = Term(c, P, ox, oy, size=14, lh=1.5)
+    c.add(t.markup(0, 0, prompt(cfg) + "cf solved --year")[0])
+
+    grid_x0 = round(ox + label_w)
+    lt = Term(c, P, grid_x0, y_grid, size=11.5, lh=1.4)
+    last_month = first.month
+    for wi in range(53):
+        w0 = first + timedelta(weeks=wi)
+        if w0.month != last_month and wi < 51:
+            c.add(lt.text(wi * pitch / lt.cw, 0, MONTHS[w0.month - 1], "subtext0"))
+        last_month = w0.month
+
+    dt = Term(c, P, ox, y_cells, size=11.5, lh=pitch / 11.5)
+    for r, lab in ((1, "一"), (3, "三"), (5, "五")):
+        c.add(dt.text(0, r, lab, "overlay1"))
+
+    best_day, best_n = "", 0
+    for wi in range(53):
+        for wd in range(7):
+            d = first + timedelta(weeks=wi, days=wd)
+            if d > today:
+                continue
+            n = int(daily.get(d.isoformat(), 0))
+            level = 0 if n <= 0 else min(4, n)
+            if n > best_n:
+                best_day, best_n = d.isoformat(), n
+            c.add(heat_cell(P, grid_x0 + wi * pitch, round(y_cells + wd * pitch), cell, level))
+
+    bt = Term(c, P, ox, y_sum, size=14, lh=1.5)
+    s = (f"[peach b]{cf.get('solved', 0):,}[/] solved [overlay1]·[/] "
+         f"[green b]{len(daily):,}[/] 天有做题 [overlay1]·[/] 单日最多 [blue b]{best_n}[/] 道")
+    c.add(bt.markup(0, 0, s)[0])
+
+    right = W - MARGIN - PAD
+    lx = right - (2 * 2 + 5 * 16 + 2 * 8) - 8
+    cy = bt.row_y(0) + (bt.lh - cell) / 2
+    out = [Term(c, P, lx, y_sum, size=14, lh=1.5).text(0, 0, "少", "overlay1")]
+    x = lx + 2 * bt.cw + 6
+    for lv in range(5):
+        out.append(heat_cell(P, round(x), round(cy), cell, lv))
+        x += 16
+    out.append(Term(c, P, x + 2, y_sum, size=14, lh=1.5).text(0, 0, "多", "overlay1"))
+    c.add("".join(out))
+    return c.svg("codeforces solved heatmap")

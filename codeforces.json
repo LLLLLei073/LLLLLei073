@@ -5,7 +5,265 @@
  "rank": "pupil",
  "max_rank": "pupil",
  "organization": "Zhejiang University of Science and Technology",
- "updated": "2026-11-08 12:27",
+ "updated": "2026-11-08 23:52",
  "solved": 177,
- "submissions": 425
+ "submissions": 425,
+ "contests": [
+  {
+   "t": 1764952500,
+   "rating": 444,
+   "name": "Codeforces Round 1068 (Div. 2)"
+  },
+  {
+   "t": 1766510100,
+   "rating": 665,
+   "name": "Codeforces Round 1071 (Div. 3)"
+  },
+  {
+   "t": 1768236600,
+   "rating": 842,
+   "name": "Codeforces Round 1072 (Div. 3)"
+  },
+  {
+   "t": 1770831300,
+   "rating": 899,
+   "name": "Codeforces Round 1079 (Div. 2)"
+  },
+  {
+   "t": 1771175700,
+   "rating": 998,
+   "name": "Codeforces Round 1080 (Div. 3)"
+  },
+  {
+   "t": 1772037300,
+   "rating": 1015,
+   "name": "Educational Codeforces Round 187 (Rated for Div. 2)"
+  },
+  {
+   "t": 1772125500,
+   "rating": 975,
+   "name": "Codeforces Round 1083 (Div. 2)"
+  },
+  {
+   "t": 1772211000,
+   "rating": 966,
+   "name": "Codeforces Round 1084 (Div. 3)"
+  },
+  {
+   "t": 1773506100,
+   "rating": 984,
+   "name": "Codeforces Round 1086 (Div. 2)"
+  },
+  {
+   "t": 1774718100,
+   "rating": 890,
+   "name": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  {
+   "t": 1777395000,
+   "rating": 879,
+   "name": "Codeforces Round 1095 (Div. 2)"
+  },
+  {
+   "t": 1777568700,
+   "rating": 863,
+   "name": "Codeforces Round 1096 (Div. 3)"
+  },
+  {
+   "t": 1778950200,
+   "rating": 1061,
+   "name": "Codeforces Round 1098 (Div. 2)"
+  },
+  {
+   "t": 1779122100,
+   "rating": 1082,
+   "name": "Educational Codeforces Round 190 (Rated for Div. 2)"
+  },
+  {
+   "t": 1779381300,
+   "rating": 1074,
+   "name": "Codeforces Round 1099 (Div. 2)"
+  },
+  {
+   "t": 1779557700,
+   "rating": 1064,
+   "name": "Spectral::Cup 2026 Round 2 (Codeforces Round 1100, Div. 1 + Div. 2)"
+  },
+  {
+   "t": 1780158900,
+   "rating": 1129,
+   "name": "Codeforces Round 1101 (Div. 2)"
+  },
+  {
+   "t": 1780851000,
+   "rating": 1105,
+   "name": "Codeforces Round 1102 (Div. 2)"
+  },
+  {
+   "t": 1783355700,
+   "rating": 1077,
+   "name": "Educational Codeforces Round 192 (Rated for Div. 2)"
+  },
+  {
+   "t": 1783875000,
+   "rating": 1086,
+   "name": "Codeforces Round 1108 (Div. 2)"
+  },
+  {
+   "t": 1784047800,
+   "rating": 1114,
+   "name": "Codeforces Round 1109 (Div. 3)"
+  },
+  {
+   "t": 1784392500,
+   "rating": 1057,
+   "name": "Codeforces Round 1111 (Div. 2)"
+  },
+  {
+   "t": 1785085500,
+   "rating": 1041,
+   "name": "Codeforces Round 1112 (Div. 2)"
+  },
+  {
+   "t": 1785603900,
+   "rating": 1134,
+   "name": "Codeforces Round 1113 (Div. 2)"
+  },
+  {
+   "t": 1786034100,
+   "rating": 1151,
+   "name": "Codeforces Round 1115 (Div. 2)"
+  },
+  {
+   "t": 1786295100,
+   "rating": 1256,
+   "name": "Codeforces Round 1116 (Div. 2)"
+  },
+  {
+   "t": 1786984500,
+   "rating": 1331,
+   "name": "Codeforces Round 1117 (Div. 2)"
+  },
+  {
+   "t": 1789234500,
+   "rating": 1335,
+   "name": "Codeforces Round 1120 (Div. 2)"
+  },
+  {
+   "t": 1790355000,
+   "rating": 1328,
+   "name": "Codeforces Round 1123 (Div. 2)"
+  },
+  {
+   "t": 1790442300,
+   "rating": 1306,
+   "name": "Codeforces Round 1124 (Div. 2)"
+  },
+  {
+   "t": 1791393300,
+   "rating": 1302,
+   "name": "Codeforces Round 1125 (Div. 3)"
+  },
+  {
+   "t": 1791655500,
+   "rating": 1325,
+   "name": "DeepInfra Round 1 (Codeforces Round 1126, Div. 1 + Div. 2)"
+  },
+  {
+   "t": 1791995700,
+   "rating": 1305,
+   "name": "Educational Codeforces Round 195 (Rated for Div. 2)"
+  },
+  {
+   "t": 1792258500,
+   "rating": 1307,
+   "name": "WorldQuant Round 1 (Codeforces Round 1128, Div. 1 + Div. 2)"
+  },
+  {
+   "t": 1792848000,
+   "rating": 1241,
+   "name": "Codeforces Round 1129 (Div. 2)"
+  }
+ ],
+ "daily": {
+  "2026-11-08": 3,
+  "2026-11-05": 1,
+  "2026-11-04": 2,
+  "2026-11-02": 2,
+  "2026-10-28": 4,
+  "2026-10-27": 3,
+  "2026-10-24": 2,
+  "2026-10-18": 2,
+  "2026-10-17": 2,
+  "2026-10-16": 1,
+  "2026-10-15": 1,
+  "2026-10-14": 4,
+  "2026-10-11": 2,
+  "2026-10-10": 2,
+  "2026-10-08": 1,
+  "2026-10-07": 4,
+  "2026-09-30": 7,
+  "2026-09-27": 1,
+  "2026-09-26": 5,
+  "2026-09-25": 2,
+  "2026-09-12": 3,
+  "2026-09-10": 1,
+  "2026-09-02": 1,
+  "2026-08-18": 2,
+  "2026-08-17": 3,
+  "2026-08-10": 1,
+  "2026-08-09": 3,
+  "2026-08-07": 1,
+  "2026-08-06": 2,
+  "2026-08-01": 3,
+  "2026-07-27": 2,
+  "2026-07-26": 1,
+  "2026-07-19": 1,
+  "2026-07-18": 3,
+  "2026-07-17": 1,
+  "2026-07-15": 4,
+  "2026-07-14": 8,
+  "2026-07-13": 5,
+  "2026-07-12": 2,
+  "2026-07-06": 2,
+  "2026-06-12": 3,
+  "2026-06-08": 1,
+  "2026-06-07": 2,
+  "2026-06-06": 1,
+  "2026-06-05": 4,
+  "2026-06-04": 4,
+  "2026-06-03": 2,
+  "2026-06-02": 4,
+  "2026-06-01": 8,
+  "2026-05-31": 1,
+  "2026-05-30": 2,
+  "2026-05-23": 3,
+  "2026-05-21": 1,
+  "2026-05-18": 2,
+  "2026-05-17": 1,
+  "2026-05-16": 2,
+  "2026-05-01": 1,
+  "2026-04-30": 3,
+  "2026-04-28": 1,
+  "2026-04-22": 3,
+  "2026-04-20": 1,
+  "2026-03-24": 1,
+  "2026-03-23": 1,
+  "2026-03-22": 1,
+  "2026-03-15": 1,
+  "2026-03-14": 1,
+  "2026-03-05": 2,
+  "2026-03-02": 3,
+  "2026-02-28": 1,
+  "2026-02-27": 3,
+  "2026-02-26": 2,
+  "2026-02-25": 1,
+  "2026-02-16": 1,
+  "2026-02-15": 2,
+  "2026-02-08": 1,
+  "2026-01-13": 1,
+  "2026-01-12": 2,
+  "2025-12-23": 1,
+  "2025-12-05": 2
+ }
 }

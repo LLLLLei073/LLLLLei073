@@ -51,6 +51,9 @@ def main():
         write(out / "assets" / f"header-{theme}.svg", cards.header(cfg, P, weather))
         write(out / "profile" / f"neofetch-{theme}.svg", cards.neofetch(cfg, P, stats, weather, cf))
         write(out / "profile" / f"activity-{theme}.svg", cards.activity(cfg, P, stats))
+        if cf:
+            write(out / "profile" / f"cf-rating-{theme}.svg", cards.cf_rating(cfg, P, cf))
+            write(out / "profile" / f"cf-heat-{theme}.svg", cards.cf_heat(cfg, P, cf))
         write(out / "assets" / f"footer-{theme}.svg", cards.footer(cfg, P, weather))
 
 
