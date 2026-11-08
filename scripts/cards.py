@@ -16,6 +16,13 @@ PAD = 24
 
 MONTHS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
 
+# Codeforces 段位配色（对应 Catppuccin 键名：灰→绿→青→蓝→紫→橙→红）
+CF_COLORS = {
+    "newbie": "overlay1", "pupil": "green", "specialist": "teal", "expert": "blue",
+    "candidate master": "mauve", "master": "peach", "international master": "peach",
+    "grandmaster": "red", "international grandmaster": "red", "legendary grandmaster": "red",
+}
+
 
 # ----------------------------------------------------------------- 小工具
 
@@ -227,8 +234,9 @@ def _typing(c: Canvas, cfg: dict, P: dict, ox: float, y: float, line: float, cmd
 INFO_COL = 0
 
 
-def neofetch(cfg: dict, P: dict, stats: dict, weather: dict | None = None) -> str:
-    info = info_lines(cfg, stats, weather or {})
+def neofetch(cfg: dict, P: dict, stats: dict, weather: dict | None = None,
+             cf: dict | None = None) -> str:
+    info = info_lines(cfg, stats, weather or {}, cf or {})
     size, lh = 14, 1.45
     rows_needed = 2 + len(info) + 1
     H = MARGIN * 2 + TITLE_H + 16 + rows_needed * size * lh + 12
@@ -252,19 +260,26 @@ def neofetch(cfg: dict, P: dict, stats: dict, weather: dict | None = None) -> st
             line = line[:ec] + " " * 3 + line[ec + 3:]
         c.add(cat.text(0, r, line, "mauve", bold=True))
     # 眼睛会眨
+    # 关键：step-end 在「没有关键帧」的时间段会一直保持上一个值，
+    # 所以每一帧必须在自己的时间窗结束时显式写一个 opacity:0，否则上一帧会赖着不走，
+    # 四帧叠在同一个位置 → 看起来就是穿模。
     names = list(art.SIT_EYES)
     timeline = [("normal", 3.2), ("blink", 0.14), ("normal", 0.2), ("blink", 0.14), ("normal", 2.4),
                 ("look", 1.1), ("normal", 1.6), ("happy", 1.4)]
     total = sum(d for _, d in timeline)
     for k, n in enumerate(names):
-        stops, tt = [], 0.0
+        wins, tt = [], 0.0
         for nm, d in timeline:
             if nm == n:
-                stops.append((tt, "opacity:1"))
-                stops.append((tt + d, "opacity:1"))
+                wins.append((tt, tt + d))
             tt += d
-        body = "".join(f"{_pct(t, total)}{{{v}}}" for t, v in stops)
-        c.style(f"@keyframes eye{k}k{{0%{{opacity:{1 if k == 0 else 0}}}{body}100%{{opacity:0}}}}"
+        stops = [(0.0, 1 if wins and abs(wins[0][0]) < 1e-9 else 0)]
+        for a, b in wins:
+            stops.append((a, 1))
+            stops.append((b, 0))
+        stops.sort(key=lambda s: s[0])
+        body = "".join(f"{_pct(min(t, total), total)}{{opacity:{v}}}" for t, v in stops)
+        c.style(f"@keyframes eye{k}k{{{body}}}"
                 f".eye{k}{{opacity:{1 if k == 0 else 0};animation:eye{k}k {total:.1f}s step-end infinite}}")
         c.add(f'<g class="eye{k}">{cat.text(ec, er, art.SIT_EYES[n], "mauve", bold=True)}</g>')
     tag = Term(c, P, ox + 14, by + 26, size=12)
@@ -292,10 +307,10 @@ def _uptime(days: int) -> str:
     return ", ".join(parts)
 
 
-def info_lines(cfg: dict, s: dict, w: dict | None = None) -> list:
-    w = w or {}
+def info_lines(cfg: dict, s: dict, w: dict | None = None, cf: dict | None = None) -> list:
+    w, cf = w or {}, cf or {}
     login = cfg["profile"]["login"]
-    k = lambda name: f"[mauve b]{name:<10}[/]"     # noqa: E731
+    k = lambda name: f"[mauve b]{name:<11}[/]"     # noqa: E731
     num = lambda v: f"[peach b]{v:,}[/]"           # noqa: E731
     dot = " [overlay1]·[/] "
     lines: list = [
@@ -304,6 +319,18 @@ def info_lines(cfg: dict, s: dict, w: dict | None = None) -> list:
     ]
     for key, val in cfg["neofetch"]["about"]:
         lines.append(k(key) + val)
+
+    # Codeforces
+    if cf.get("rating") is not None:
+        color = CF_COLORS.get(cf.get("rank", ""), "overlay1")
+        cf_line = f"{k('codeforces')}[{color} b]{cf['rating']}[/]"
+        if cf.get("max_rating"):
+            cf_line += f"[overlay1] (max {cf['max_rating']})[/]"
+        if cf.get("rank"):
+            cf_line += f"[overlay1]{dot}[/][{color}]{cf['rank']}[/]"
+        if cf.get("solved"):
+            cf_line += f"[overlay1]{dot}[/][peach b]{cf['solved']}[/][overlay1] solved[/]"
+        lines.append(cf_line)
 
     # 今天的天气
     if w.get("state"):

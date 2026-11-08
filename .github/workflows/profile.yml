@@ -38,6 +38,9 @@ jobs:
       - name: Fetch today's weather
         run: python scripts/weather.py          # 同上：抓不到就沿用上一次的天气
 
+      - name: Fetch Codeforces
+        run: python scripts/codeforces.py       # 同上：抓不到就沿用上一次的 CF 数据
+
       - name: Draw the pictures
         run: python scripts/gen.py
 

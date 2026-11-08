@@ -61,6 +61,10 @@ timezone = "Asia/Shanghai"
 # clear / cloudy / rain / snow / fog / thunder / typhoon
 force = ""
 
+# ── Codeforces ─────────────────────────────────────────────────────────
+[codeforces]
+handle = "LLLLLLei"
+
 # ── 结尾 ───────────────────────────────────────────────────────────────
 [footer]
 title = "logout"

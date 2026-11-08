@@ -41,11 +41,15 @@ def main():
     weather = json.loads(weather_file.read_text(encoding="utf-8")) if weather_file.exists() else {}
     if weather:
         print(f"天气：{weather.get('label', '')} {weather.get('temp', '?')}°C（{weather.get('state', '')}）")
+    cf_file = ROOT / "codeforces.json"
+    cf = json.loads(cf_file.read_text(encoding="utf-8")) if cf_file.exists() else {}
+    if cf:
+        print(f"CF：{cf.get('handle')} {cf.get('rating')}（最高 {cf.get('max_rating')}）{cf.get('rank')}")
 
     for theme, P in THEMES.items():
         print(f"[{theme}]")
         write(out / "assets" / f"header-{theme}.svg", cards.header(cfg, P, weather))
-        write(out / "profile" / f"neofetch-{theme}.svg", cards.neofetch(cfg, P, stats, weather))
+        write(out / "profile" / f"neofetch-{theme}.svg", cards.neofetch(cfg, P, stats, weather, cf))
         write(out / "profile" / f"activity-{theme}.svg", cards.activity(cfg, P, stats))
         write(out / "assets" / f"footer-{theme}.svg", cards.footer(cfg, P, weather))
 
