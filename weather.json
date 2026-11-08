@@ -5,13 +5,13 @@
  "label": "阴",
  "severity": 0,
  "alert": "",
- "temp": 15.1,
- "feels": 13.5,
+ "temp": 14.9,
+ "feels": 13.1,
  "humidity": 87,
- "wind": 17.2,
- "gust": 36.7,
+ "wind": 17.8,
+ "gust": 38.2,
  "precip": 0.0,
  "is_day": false,
- "updated": "2026-11-08T23:45",
+ "updated": "2026-11-09T00:15",
  "forced": false
 }
