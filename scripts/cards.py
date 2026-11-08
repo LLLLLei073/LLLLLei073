@@ -24,10 +24,25 @@ CF_COLORS = {
 }
 
 
+# Codeforces 段位阈值（rating 区间 + 对应配色键名）
+CF_TIERS = [
+    ("newbie", 0, 1200),
+    ("pupil", 1200, 1400),
+    ("specialist", 1400, 1600),
+    ("expert", 1600, 1900),
+    ("candidate master", 1900, 2100),
+    ("master", 2100, 2300),
+    ("international master", 2300, 2400),
+    ("grandmaster", 2400, 2600),
+    ("international grandmaster", 2600, 3000),
+    ("legendary grandmaster", 3000, 4000),
+]
+
+
 def cf_color(rating: int) -> str:
     """按 CF 官方段位阈值给颜色。"""
     if rating < 1200:
-        return "overlay1"
+        return "subtext0"
     if rating < 1400:
         return "green"
     if rating < 1600:
@@ -544,9 +559,34 @@ def cf_rating(cfg: dict, P: dict, cf: dict) -> str:
     hi = int(-(-max(ratings) // 200) * 200)
     if hi - lo < 400:
         hi = lo + 400
+    # 顶上多留一档，让人看见「下一段是什么颜色」
+    if hi <= max(ratings) + 60:
+        hi += 200
 
     def yy(r: float) -> float:
         return y1 - (r - lo) / (hi - lo) * (y1 - y0)
+
+    # 段位色带（像 CF 官网那样，横着一层一层的）
+    for name, r_lo, r_hi in CF_TIERS:
+        if r_hi <= lo or r_lo >= hi:
+            continue
+        top, bottom = yy(min(r_hi, hi)), yy(max(r_lo, lo))
+        if bottom - top < 0.5:
+            continue
+        color = P[CF_COLORS[name]]
+        tint = mix(color, P["base"], 0.72 if P["name"] == "light" else 0.68)
+        c.add(f'<rect x="{x0}" y="{top:.1f}" width="{x1 - x0:.0f}" height="{bottom - top:.1f}" fill="{tint}"/>')
+        if lo < r_lo < hi:            # 分段的那条线
+            c.add(f'<line x1="{x0}" y1="{yy(r_lo):.1f}" x2="{x1}" y2="{yy(r_lo):.1f}" '
+                  f'stroke="{color}" stroke-width="1" opacity=".45" stroke-dasharray="6 5"/>')
+        # 段位名（左下角贴边，先铺一块同色底把网格线盖住）
+        if bottom - top >= 26:
+            label = name
+            lt = Term(c, P, x0 + 8, (top + bottom) / 2 + 4, size=10.5)
+            wpx = cells(label) * lt.cw
+            c.add(f'<rect x="{x0 + 3}" y="{(top + bottom) / 2 - 8:.1f}" width="{wpx + 10:.1f}" '
+                  f'height="16" fill="{tint}"/>')
+            c.add(lt.text(0, 0, label, name if name != "newbie" else "subtext0"))
 
     times = [p["t"] for p in hist]
     t0, t1 = times[0], times[-1] or times[0] + 1
@@ -560,23 +600,18 @@ def cf_rating(cfg: dict, P: dict, cf: dict) -> str:
     while r <= hi:
         y = yy(r)
         c.add(f'<line x1="{x0}" y1="{y:.1f}" x2="{x1}" y2="{y:.1f}" stroke="{P["overlay0"]}" '
-              f'stroke-width="1" opacity="0.28"/>')
+              f'stroke-width="1" opacity="0.18"/>')
         label = str(r)
         lt = Term(c, P, 0, y + 4, size=11.5)
         lt.x = x0 - 10 - cells(label) * lt.cw
         c.add(lt.text(0, 0, label, "overlay1"))
         r += step
 
-    # 面积（线下方）+ 折线（按段位分段上色）
+    # 折线（按段位分段上色）：先描一遍底色当「描边」，深色背景/色带上都不会糊
     pts = [(xx(p["t"]), yy(p["rating"])) for p in hist]
-    area = (f"M{pts[0][0]:.1f},{y1:.1f} " + " ".join(f"L{x:.1f},{y:.1f}" for x, y in pts)
-            + f" L{pts[-1][0]:.1f},{y1:.1f} Z")
-    gid = c.uid("cfa")
-    c.define(gid, f'<linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1">'
-                  f'<stop offset="0" stop-color="{P["blue"]}" stop-opacity=".22"/>'
-                  f'<stop offset="1" stop-color="{P["blue"]}" stop-opacity="0"/></linearGradient>')
-    c.add(f'<path d="{area}" fill="url(#{gid})"/>')
-
+    casing = (f"M{pts[0][0]:.1f},{pts[0][1]:.1f} " + " ".join(f"L{x:.1f},{y:.1f}" for x, y in pts[1:]))
+    c.add(f'<path d="{casing}" fill="none" stroke="{P["base"]}" stroke-width="5.2" '
+          f'stroke-linejoin="round" stroke-linecap="round"/>')
     for i in range(1, len(pts)):
         color = cf_color(hist[i]["rating"])
         c.add(f'<line x1="{pts[i - 1][0]:.1f}" y1="{pts[i - 1][1]:.1f}" x2="{pts[i][0]:.1f}" '
