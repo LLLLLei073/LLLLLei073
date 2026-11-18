@@ -5,9 +5,9 @@
  "rank": "pupil",
  "max_rank": "pupil",
  "organization": "Zhejiang University of Science and Technology",
- "updated": "2026-11-17 10:58",
- "solved": 185,
- "submissions": 444,
+ "updated": "2026-11-18 10:28",
+ "solved": 186,
+ "submissions": 446,
  "contests": [
   {
    "t": 1764952500,
@@ -186,6 +186,7 @@
   }
  ],
  "daily": {
+  "2026-11-17": 1,
   "2026-11-11": 4,
   "2026-11-10": 3,
   "2026-11-09": 6,
